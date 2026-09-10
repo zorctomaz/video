@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FOTRA :: VIDEO</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+  :root{
+    --dos-blue: #0000AA;
+    --dos-blue-dark: #000077;
+    --cyan: #55FFFF;
+    --cyan-dim: #00AAAA;
+    --white: #FFFFFF;
+    --yellow: #FFFF55;
+    --grey: #AAAAAA;
+    --black: #000000;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    background: var(--dos-blue);
+    color: var(--white);
+    font-family: 'VT323', monospace;
+  }
+
+  body{
+    min-height:100svh;
+    display:flex;
+    justify-content:center;
+    padding: clamp(0.6rem, 3vw, 1.6rem);
+  }
+
+  /* CRT scanlines */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0.18) 0px,
+      rgba(0,0,0,0.18) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    z-index: 5;
+  }
+
+  .screen{
+    width:100%;
+    max-width: 760px;
+    border: 6px double var(--cyan);
+    background: var(--dos-blue);
+    padding: clamp(1rem, 4vw, 1.8rem) clamp(1.2rem, 4vw, 2.2rem) clamp(1.4rem, 4vw, 2rem);
+  }
+
+  .titlebar{
+    text-align:center;
+    border-bottom: 2px solid var(--cyan-dim);
+    padding-bottom: 0.9rem;
+    margin-bottom: 1.3rem;
+    position:relative;
+  }
+
+  .lang-toggle{
+    position:absolute;
+    top: 0;
+    right: 0;
+    display:flex;
+    border: 2px solid var(--cyan);
+  }
+
+  .lang-btn{
+    font-family:'VT323', monospace;
+    background: var(--dos-blue);
+    color: var(--cyan);
+    border: none;
+    padding: 0.2rem 0.6rem;
+    font-size: clamp(0.95rem, 3vw, 1.15rem);
+    cursor:pointer;
+    letter-spacing: 0.05em;
+  }
+
+  .lang-btn + .lang-btn{ border-left: 2px solid var(--cyan); }
+
+  .lang-btn.active{
+    background: var(--cyan);
+    color: var(--black);
+  }
+
+  .back-link{
+    position:absolute;
+    top:0;
+    left:0;
+    color: var(--yellow);
+    text-decoration:none;
+    font-size: clamp(0.95rem, 3vw, 1.15rem);
+    letter-spacing:0.05em;
+  }
+
+  .back-link:hover, .back-link:focus-visible{ color: var(--white); }
+
+  .ascii-title{
+    font-size: clamp(2.2rem, 9vw, 3.2rem);
+    line-height:1;
+    letter-spacing: 0.12em;
+    color: var(--yellow);
+    text-shadow: 0 0 6px rgba(255,255,85,0.5);
+    margin: 0 0 0.35rem;
+  }
+
+  .sub{
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    color: var(--cyan);
+    letter-spacing: 0.08em;
+    margin:0;
+  }
+
+  .video-list{
+    display:flex;
+    flex-direction:column;
+    gap: 1.3rem;
+  }
+
+  .video-item{
+    border: 2px solid var(--cyan-dim);
+  }
+
+  .video-num{
+    display:flex;
+    align-items:center;
+    gap: 0.6rem;
+    padding: 0.4rem 0.7rem;
+    border-bottom: 2px solid var(--cyan-dim);
+    font-size: clamp(1.05rem, 3.4vw, 1.25rem);
+  }
+
+  .video-num .n{
+    color: var(--black);
+    background: var(--yellow);
+    padding: 0 0.5em;
+    font-weight:normal;
+  }
+
+  .video-frame{
+    position:relative;
+    width:100%;
+    aspect-ratio: 16/9;
+    background: var(--black);
+  }
+
+  .video-frame iframe{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    border:0;
+  }
+
+  .statusbar{
+    margin-top: 1.3rem;
+    padding-top: 0.9rem;
+    border-top: 2px solid var(--cyan-dim);
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    color: var(--grey);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap: 0.4rem;
+  }
+
+  .prompt{ color: var(--white); }
+
+  .cursor{
+    display:inline-block;
+    width: 0.55em;
+    background: var(--white);
+    animation: blink 1s steps(1) infinite;
+    margin-left: 2px;
+  }
+
+  .cursor::after{ content:"\00a0"; }
+
+  @keyframes blink{
+    0%,49%{ opacity:1; }
+    50%,100%{ opacity:0; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .cursor{ animation:none; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="screen">
+    <div class="titlebar">
+      <a class="back-link" href="https://fotra.net/" data-sl="[ESC]" data-en="[ESC]">[ESC]</a>
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button type="button" class="lang-btn active" data-lang="sl">SI</button>
+        <button type="button" class="lang-btn" data-lang="en">EN</button>
+      </div>
+      <p class="ascii-title">VIDEO</p>
+      <p class="sub" data-sl="ZADNJI POSNETKI" data-en="LATEST CLIPS">ZADNJI POSNETKI</p>
+    </div>
+
+    <div class="video-list">
+      <div class="video-item">
+        <div class="video-num"><span class="n">1</span> <span data-sl="POSNETEK 1" data-en="CLIP 1">POSNETEK 1</span></div>
+        <div class="video-frame">
+          <iframe src="https://www.youtube.com/embed/ANJt-dXkMVA" title="Video 1" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-num"><span class="n">2</span> <span data-sl="POSNETEK 2" data-en="CLIP 2">POSNETEK 2</span></div>
+        <div class="video-frame">
+          <iframe src="https://www.youtube.com/embed/BbXSDa-yFgM" title="Video 2" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-num"><span class="n">3</span> <span data-sl="POSNETEK 3" data-en="CLIP 3">POSNETEK 3</span></div>
+        <div class="video-frame">
+          <iframe src="https://www.youtube.com/embed/9GSd50Vraus" title="Video 3" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+      </div>
+
+      <div class="video-item">
+        <div class="video-num"><span class="n">4</span> <span data-sl="POSNETEK 4" data-en="CLIP 4">POSNETEK 4</span></div>
+        <div class="video-frame">
+          <iframe src="https://www.youtube.com/embed/pAsRGFwxPQs" title="Video 4" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="statusbar">
+      <span class="prompt">C:\FOTRA\VIDEO&gt;<span class="cursor"></span></span>
+      <span data-sl="ESC=NAZAJ" data-en="ESC=BACK">ESC=NAZAJ</span>
+    </div>
+  </div>
+
+<script>
+  function setLang(lang){
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-sl][data-en]').forEach(function(el){
+      el.textContent = lang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-sl');
+    });
+    document.querySelectorAll('.lang-btn').forEach(function(btn){
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
+    try{ localStorage.setItem('fotraLang', lang); }catch(e){}
+  }
+
+  document.querySelectorAll('.lang-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){ setLang(btn.getAttribute('data-lang')); });
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){
+      window.location.href = 'https://fotra.net/';
+    }
+  });
+
+  // Restore the language: ?lang= from a fotra.net link takes priority
+  // (this is now a different origin, so localStorage isn't shared with
+  // the hub), then this page's own last choice, then sl by default.
+  (function(){
+    var initialLang = 'sl';
+    try{
+      var urlLang = new URLSearchParams(window.location.search).get('lang');
+      var stored = localStorage.getItem('fotraLang');
+      if(urlLang === 'en' || urlLang === 'sl'){ initialLang = urlLang; }
+      else if(stored === 'en' || stored === 'sl'){ initialLang = stored; }
+    }catch(e){}
+    setLang(initialLang);
+  })();
+</script>
+
+</body>
+</html>
