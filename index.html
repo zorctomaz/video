@@ -201,13 +201,14 @@
     color: var(--grey);
   }
 
+  .term-log{ display:flex; flex-direction:column; gap:2px; max-height:7.4em; overflow-y:auto; margin-bottom:.5rem; }
+  .term-log div{ white-space:pre-wrap; word-break:break-word; }
   .term-line{ display:flex; align-items:center; gap: 0.5rem; cursor: text; }
   .term-input{
     flex:1; min-width:0; background:transparent; border:none; outline:none; padding:0;
     color: var(--white); font-family:'VT323', monospace; font-size: inherit; caret-color: var(--white);
   }
   .term-input::placeholder{ color: var(--grey); opacity:.85; }
-  .term-input.term-error{ color: #FF5555; }
 
   /* ---------- SNAKE overlay (BACK / SNAKE terminal commands) ---------- */
   .snake-overlay{
@@ -332,9 +333,10 @@
     </div>
 
     <div class="statusbar">
+      <div class="term-log" id="termLog" aria-live="polite"></div>
       <div class="term-line">
         <label for="termInput" class="prompt">C:\FOTRA\VIDEO&gt;</label>
-        <input type="text" id="termInput" class="term-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Command input" placeholder="back / snake" data-sl-ph="ukaz: back / snake" data-en-ph="command: back / snake">
+        <input type="text" id="termInput" class="term-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Command input" placeholder="vnesi ukaz (HELP)" data-sl-ph="vnesi ukaz (HELP)" data-en-ph="type a command (HELP)">
       </div>
     </div>
   </div>
@@ -500,31 +502,51 @@
       }
     });
 
-    var termErrors = {
-      sl: function(c){ return "'" + c + "' ni prepoznan ukaz. Poskusi: back, snake"; },
-      en: function(c){ return "'" + c + "' is not a recognized command. Try: back, snake"; }
+    var termLog = document.getElementById('termLog');
+    var termHelp = {
+      sl: ['Ukazi: BACK = nazaj na fotra.net    SNAKE = igra Kača', 'HELP = ta pomoč'],
+      en: ['Commands: BACK = back to fotra.net    SNAKE = Snake game', 'HELP = this help']
     };
-    function runCommand(raw){
+    var termUnknown = {
+      sl: function(c){ return ["'" + c + "' ni prepoznan kot ukaz.", 'Vtipkaj HELP za pomoč.']; },
+      en: function(c){ return ["'" + c + "' is not a recognized command.", 'Type HELP for help.']; }
+    };
+    function termPrint(lines){
+      lines.forEach(function(line){
+        var row = document.createElement('div');
+        row.textContent = line;
+        termLog.appendChild(row);
+      });
+      termLog.scrollTop = termLog.scrollHeight;
+    }
+    function termRunCommand(raw){
       var cmd = raw.trim();
       if(!cmd) return;
+      termPrint(['C:\\FOTRA\\VIDEO>' + cmd]);
       var norm = cmd.toUpperCase();
-      if(norm === 'BACK'){ window.location.href = 'https://fotra.net/'; return; }
-      if(norm === 'SNAKE'){ openSnake(); return; }
-      termInput.classList.add('term-error');
-      termInput.value = '';
-      termInput.placeholder = termErrors[currentLang()](cmd);
-      setTimeout(function(){
-        termInput.classList.remove('term-error');
-        termInput.placeholder = termInput.getAttribute(currentLang() === 'en' ? 'data-en-ph' : 'data-sl-ph');
-      }, 1600);
+      if(norm === 'BACK'){
+        termPrint([currentLang() === 'sl' ? 'Odpiram ...' : 'Opening ...']);
+        window.setTimeout(function(){ window.location.href = 'https://fotra.net/'; }, 200);
+        return;
+      }
+      if(norm === 'SNAKE'){
+        termPrint([currentLang() === 'sl' ? 'Zaganjam KACA.EXE ...' : 'Launching SNAKE.EXE ...']);
+        window.setTimeout(openSnake, 200);
+        return;
+      }
+      if(norm === 'HELP' || norm === '?'){ termPrint(termHelp[currentLang()]); return; }
+      termPrint(termUnknown[currentLang()](cmd));
     }
     termInput.addEventListener('keydown', function(e){
       if(e.key === 'Enter'){
         e.preventDefault();
-        runCommand(termInput.value);
+        termRunCommand(termInput.value);
         termInput.value = '';
       }
     });
+    document.querySelector('.statusbar').addEventListener('click', function(){ termInput.focus(); });
+
+    termPrint([currentLang() === 'sl' ? 'Vtipkaj HELP za seznam ukazov.' : 'Type HELP for a list of commands.']);
   })();
 
   // Restore the language: ?lang= from a fotra.net link takes priority
