@@ -55,6 +55,17 @@
     z-index: 5;
   }
 
+  /* Outer double-line frame, flush with the viewport edge — matches
+     fotra.net (whose .screen box itself fills the viewport) and the
+     same overlay now used on jadranje.fotra.net / norway.fotra.net */
+  .crt-frame{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    border: 6px double var(--cyan);
+    z-index: 6;
+  }
+
   .screen{
     width:100%;
     max-width: 760px;
@@ -203,6 +214,7 @@
 </style>
 </head>
 <body>
+<div class="crt-frame" aria-hidden="true"></div>
 
   <div class="screen">
     <div class="titlebar">
