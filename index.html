@@ -80,6 +80,11 @@
   /* The divider still reaches the frame edge (cancels .screen's own side
      padding); its content is re-centered at --maxw via .titlebar-inner. */
   .titlebar{
+    /* width must stay auto: an explicit width alongside explicit left+right
+       margins is an over-constrained box, and browsers resolve that by
+       silently discarding margin-right (LTR) — which quietly cancelled the
+       right side of this exact fix. auto lets both margins be honored. */
+    width:auto;
     max-width:none;
     text-align:center;
     border-bottom: 2px solid var(--cyan-dim);
