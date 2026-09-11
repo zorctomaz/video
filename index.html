@@ -19,6 +19,7 @@
     --yellow: #FFFF55;
     --grey: #AAAAAA;
     --black: #000000;
+    --maxw: 1180px;
   }
 
   *{ box-sizing:border-box; }
@@ -72,14 +73,23 @@
     overflow-y:auto;
   }
 
-  /* Cancels .screen's own side padding so the divider reaches the frame
-     edge, like every other divider on jadranje.fotra.net / norway.fotra.net;
-     the padding below puts the icons/title back at the same inset. */
+  /* Content column matches jadranje.fotra.net / norway.fotra.net (--maxw),
+     so text/media don't stretch edge-to-edge on very wide screens. */
+  .screen > *{ width:100%; max-width: var(--maxw); margin-left:auto; margin-right:auto; }
+
+  /* The divider still reaches the frame edge (cancels .screen's own side
+     padding); its content is re-centered at --maxw via .titlebar-inner. */
   .titlebar{
+    max-width:none;
     text-align:center;
     border-bottom: 2px solid var(--cyan-dim);
     margin: 0 calc(-1 * clamp(1.2rem, 4vw, 2.2rem)) 1.3rem;
-    padding: 0 clamp(1.2rem, 4vw, 2.2rem) 0.9rem;
+    padding-bottom: 0.9rem;
+  }
+  .titlebar-inner{
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 clamp(1.2rem, 4vw, 2.2rem);
     position:relative;
   }
 
@@ -218,15 +228,17 @@
 
   <div class="screen">
     <div class="titlebar">
-      <a class="home-btn" href="https://fotra.net/" aria-label="fotra.net" title="fotra.net">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-5h4v5h4a1 1 0 0 0 1-1v-9"/></svg>
-      </a>
-      <div class="lang-toggle" role="group" aria-label="Language">
-        <button type="button" class="lang-btn active" data-lang="sl">SI</button>
-        <button type="button" class="lang-btn" data-lang="en">EN</button>
+      <div class="titlebar-inner">
+        <a class="home-btn" href="https://fotra.net/" aria-label="fotra.net" title="fotra.net">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-5h4v5h4a1 1 0 0 0 1-1v-9"/></svg>
+        </a>
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button type="button" class="lang-btn active" data-lang="sl">SI</button>
+          <button type="button" class="lang-btn" data-lang="en">EN</button>
+        </div>
+        <p class="ascii-title">VIDEO</p>
+        <p class="sub" data-sl="ZADNJI POSNETKI" data-en="LATEST CLIPS">ZADNJI POSNETKI</p>
       </div>
-      <p class="ascii-title">VIDEO</p>
-      <p class="sub" data-sl="ZADNJI POSNETKI" data-en="LATEST CLIPS">ZADNJI POSNETKI</p>
     </div>
 
     <div class="video-list">
