@@ -546,7 +546,12 @@
     });
     document.querySelector('.statusbar').addEventListener('click', function(){ termInput.focus(); });
 
-    termPrint([currentLang() === 'sl' ? 'Vtipkaj HELP za seznam ukazov.' : 'Type HELP for a list of commands.']);
+    // Deferred: runs after the initial-language IIFE below has called
+    // setLang(), so the greeting prints in the language the page
+    // actually loads in (?lang=, then localStorage, then sl default).
+    setTimeout(function(){
+      termPrint([currentLang() === 'sl' ? 'Vtipkaj HELP za seznam ukazov.' : 'Type HELP for a list of commands.']);
+    }, 0);
   })();
 
   // Restore the language: ?lang= from a fotra.net link takes priority
