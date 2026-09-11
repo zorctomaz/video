@@ -97,17 +97,19 @@
     color: var(--black);
   }
 
-  .back-link{
+  .home-btn{
     position:absolute;
     top:0;
     left:0;
-    color: var(--yellow);
+    display:inline-flex;
+    color: var(--cyan);
     text-decoration:none;
-    font-size: clamp(0.95rem, 3vw, 1.15rem);
-    letter-spacing:0.05em;
+    transition: color .15s ease, transform .15s ease;
   }
 
-  .back-link:hover, .back-link:focus-visible{ color: var(--white); }
+  .home-btn svg{ width:20px; height:20px; flex:none; }
+
+  .home-btn:hover, .home-btn:focus-visible{ color: var(--yellow); transform:translateY(-1px); }
 
   .ascii-title{
     font-size: clamp(2.2rem, 9vw, 3.2rem);
@@ -204,7 +206,9 @@
 
   <div class="screen">
     <div class="titlebar">
-      <a class="back-link" href="https://fotra.net/" data-sl="[ESC]" data-en="[ESC]">[ESC]</a>
+      <a class="home-btn" href="https://fotra.net/" aria-label="fotra.net" title="fotra.net">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-5h4v5h4a1 1 0 0 0 1-1v-9"/></svg>
+      </a>
       <div class="lang-toggle" role="group" aria-label="Language">
         <button type="button" class="lang-btn active" data-lang="sl">SI</button>
         <button type="button" class="lang-btn" data-lang="en">EN</button>
