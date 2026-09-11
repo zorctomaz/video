@@ -33,10 +33,11 @@
   }
 
   body{
-    min-height:100svh;
+    height:100svh;
     display:flex;
-    justify-content:center;
-    padding: clamp(0.6rem, 3vw, 1.6rem);
+    align-items:stretch;
+    justify-content:stretch;
+    padding:0;
   }
 
   /* CRT scanlines */
@@ -55,23 +56,20 @@
     z-index: 5;
   }
 
-  /* Outer double-line frame, flush with the viewport edge — matches
-     fotra.net (whose .screen box itself fills the viewport) and the
-     same overlay now used on jadranje.fotra.net / norway.fotra.net */
-  .crt-frame{
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    border: 6px double var(--cyan);
-    z-index: 6;
-  }
-
+  /* .screen itself fills the viewport, so its border sits right at the
+     edge — a single frame, exactly like fotra.net / jadranje.fotra.net /
+     norway.fotra.net, instead of a smaller centered box plus an overlay. */
   .screen{
     width:100%;
-    max-width: 760px;
+    height:100%;
+    max-width:none;
     border: 6px double var(--cyan);
     background: var(--dos-blue);
     padding: clamp(1rem, 4vw, 1.8rem) clamp(1.2rem, 4vw, 2.2rem) clamp(1.4rem, 4vw, 2rem);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    overflow-y:auto;
   }
 
   .titlebar{
@@ -214,7 +212,6 @@
 </style>
 </head>
 <body>
-<div class="crt-frame" aria-hidden="true"></div>
 
   <div class="screen">
     <div class="titlebar">
