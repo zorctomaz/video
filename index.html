@@ -192,10 +192,21 @@
     border:0;
   }
 
+  /* Statusbar becomes a full-bleed band, alternating to the dark blue —
+     same edge-to-edge trick as .titlebar (cancels .screen's side padding,
+     re-centers its content at --maxw via .statusbar-inner). */
   .statusbar{
-    margin-top: 1.3rem;
-    padding-top: 0.9rem;
+    width:auto;
+    max-width:none;
+    margin: 1.3rem calc(-1 * clamp(1.2rem, 4vw, 2.2rem)) calc(-1 * clamp(1.4rem, 4vw, 2rem));
+    padding: 0.9rem 0 clamp(1.4rem, 4vw, 2rem);
     border-top: 2px solid var(--cyan-dim);
+    background: var(--dos-blue-dark);
+  }
+  .statusbar-inner{
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 clamp(1.2rem, 4vw, 2.2rem);
     font-size: clamp(1rem, 3vw, 1.2rem);
     color: var(--grey);
   }
@@ -342,11 +353,13 @@
     </div>
 
     <div class="statusbar">
-      <a class="foot-email" href="mailto:info@fotra.net">info@fotra.net</a>
-      <div class="term-log" id="termLog" aria-live="polite"></div>
-      <div class="term-line">
-        <label for="termInput" class="prompt">C:\FOTRA\VIDEO&gt;</label>
-        <input type="text" id="termInput" class="term-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Command input" placeholder="vnesi ukaz (HELP)" data-sl-ph="vnesi ukaz (HELP)" data-en-ph="type a command (HELP)">
+      <div class="statusbar-inner">
+        <a class="foot-email" href="mailto:info@fotra.net">info@fotra.net</a>
+        <div class="term-log" id="termLog" aria-live="polite"></div>
+        <div class="term-line">
+          <label for="termInput" class="prompt">C:\FOTRA\VIDEO&gt;</label>
+          <input type="text" id="termInput" class="term-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Command input" placeholder="vnesi ukaz (HELP)" data-sl-ph="vnesi ukaz (HELP)" data-en-ph="type a command (HELP)">
+        </div>
       </div>
     </div>
   </div>
